@@ -6,7 +6,7 @@ formulario_ajax.forEach(formularios => {
 
         Swal.fire({
             title: "¿Estas seguro?",
-            text: "¿Quieres realizar la ación solicitada?",
+            text: "¿Quieres realizar la acción solicitada?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
