@@ -1,0 +1,8 @@
+# Ignorar todas las fotos en app/views/fotos/
+/app/views/fotos/*.jpg
+/app/views/fotos/*.png
+
+
+# Exceptuar default.png
+!/app/views/fotos/default.png
+
