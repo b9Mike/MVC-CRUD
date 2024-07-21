@@ -1,1 +1,3 @@
-cerrar secion
+<?php
+    $instLogin->cerrarSesionControladors();
+?>
