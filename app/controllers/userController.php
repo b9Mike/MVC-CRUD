@@ -299,4 +299,137 @@
 
         }
 
+        #metodo para listar usuarios
+        public function listarUsuarioControlador($pagina, $registros, $url, $busqueda){
+            #recibiendo datos
+            $pagina = $this->limpiarCadena($pagina);
+            $registros = $this->limpiarCadena($registros);
+            
+            $url = $this->limpiarCadena($url);
+            $url = APP_URL.$url."/";
+            
+            $busqueda = $this->limpiarCadena($busqueda);
+            $tabla = "";
+
+            $pagina = (isset($pagina) && $pagina > 0) ? (int) $pagina : $pagina = 1;
+
+            $inicio = ($pagina > 0) ? (($pagina*$registros)-$registros) : 0;
+
+            if(isset($busqueda) && $busqueda != ""){
+                
+                $consultaDatos = "SELECT * FROM users WHERE ((user_id != '".$_SESSION['id']."' AND user_id != 1) AND (user_name LIKE '%$busqueda%' OR user_lastname LIKE '%$busqueda%' OR user_email LIKE '%$busqueda%' OR user_user LIKE '%$busqueda%')) ORDER BY user_name ASC LIMIT $inicio, $registros";
+
+                $consultaTotal = "SELECT COUNT(user_id) FROM users WHERE ((user_id != '".$_SESSION['id']."' AND user_id != 1) AND (user_name LIKE '%$busqueda%' OR user_lastname LIKE '%$busqueda%' OR user_email LIKE '%$busqueda%' OR user_user LIKE '%$busqueda%'))";
+            
+            }else{
+
+                $consultaDatos = "SELECT * FROM users WHERE user_id != '".$_SESSION['id']."' AND user_id != 1 ORDER BY user_name ASC LIMIT $inicio, $registros";
+
+                $consultaTotal = "SELECT COUNT(user_id) FROM users WHERE user_id != '".$_SESSION['id']."' AND user_id != 1";
+
+            }
+
+            $datos = $this->ejecutarConsulta($consultaDatos);
+            $datos = $datos->fetchAll();
+
+            $total = $this->ejecutarConsulta($consultaTotal);
+            $total = (int) $total->fetchColumn();
+
+            $numeroPagina = ceil($total/$registros);
+
+            $tabla .= '
+            <div class="table-container">
+                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th class="has-text-centered">#</th>
+                            <th class="has-text-centered">Nombre</th>
+                            <th class="has-text-centered">Usuario</th>
+                            <th class="has-text-centered">Email</th>
+                            <th class="has-text-centered">Creado</th>
+                            <th class="has-text-centered">Actualizado</th>
+                            <th class="has-text-centered" colspan="3">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            ';
+
+            if($total >= 1 && $pagina <= $numeroPagina){
+                
+                $contador = $inicio + 1;
+                $pagInicio = $inicio + 1;
+
+                foreach($datos as $dato){
+                    $tabla .= '
+                        <tr class="has-text-centered">
+                            <td>'.$contador.'</td>
+                            <td>'.$dato["user_name"]." ".$dato["user_lastname"].'</td>
+                            <td>'.$dato["user_user"].'</td>
+                            <td>'.$dato["user_email"].'</td>
+                            <td>'.date("d-m-Y h:m:s A", strtotime($dato["user_created"])).'</td>
+                            <td>'.date("d-m-Y h:m:s A", strtotime($dato["user_update"])).'</td>
+                            <td>
+                                <a href="'.APP_URL.'userPhoto/'.$dato["user_id"].'/" class="button is-info is-rounded is-small">Foto</a>
+                            </td>
+                            <td>
+                                <a href="'.APP_URL.'userUpdate/'.$dato["user_id"].'/" class="button is-success is-rounded is-small">Actualizar</a>
+                            </td>
+                            <td>
+                                <form class="FormularioAjax" action="'.APP_URL.'/app/ajax/usuarioAjax" method="POST" autocomplete="off">
+
+                                    <input type="hidden" name="modulo_usuario" value="eliminar">
+                                    <input type="hidden" name="usuario_id" value="'.$dato["user_id"].'">
+
+                                    <button type="submit" class="button is-danger is-rounded is-small">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    ';
+                    $contador++;
+                }
+
+                $paggFinal = $contador - 1;
+
+            }else{
+
+                if($total >= 1){
+                    $tabla .= '
+                        <tr class="has-text-centered" >
+                            <td colspan="7">
+                                <a href="'.$url.'1/" class="button is-link is-rounded is-small mt-4 mb-4">
+                                    Haga clic acá para recargar el listado
+                                </a>
+                            </td>
+                        </tr>
+                    ';
+                }else{
+                    $tabla .= '
+                        <tr class="has-text-centered" >
+                            <td colspan="7">
+                                No hay registros en el sistema
+                            </td>
+                        </tr>
+                    '; 
+                }
+
+            }
+
+            $tabla .= '
+                    </tbody>
+                </table>
+            </div>
+            ';
+
+            if($total >= 1 && $pagina <= $numeroPagina){
+
+                $tabla .= '<p class="has-text-right">Mostrando usuarios <strong>'.$pagInicio.'</strong> al <strong>'.$paggFinal.'</strong> de un <strong>total de '.$total.'</strong></p>';
+
+                $tabla .= $this->paginadorTablas($pagina, $numeroPagina, $url, 6);
+                
+            }
+
+            return $tabla;
+
+        }
+
     }
