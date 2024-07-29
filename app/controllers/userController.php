@@ -375,7 +375,7 @@
                                 <a href="'.APP_URL.'userUpdate/'.$dato["user_id"].'/" class="button is-success is-rounded is-small">Actualizar</a>
                             </td>
                             <td>
-                                <form class="FormularioAjax" action="'.APP_URL.'/app/ajax/usuarioAjax" method="POST" autocomplete="off">
+                                <form class="FormularioAjax" action="'.APP_URL.'app/ajax/usuarioAjax.php" method="POST" autocomplete="off">
 
                                     <input type="hidden" name="modulo_usuario" value="eliminar">
                                     <input type="hidden" name="usuario_id" value="'.$dato["user_id"].'">
@@ -431,5 +431,69 @@
             return $tabla;
 
         }
+
+        #metodo para eliminar usuario
+        public function eliminarUsuarioControlador(){
+
+            $id = $this->limpiarCadena($_POST['usuario_id']);
+
+            if($id == 1){
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "No podemos eliminar este usuario",
+                    "icono" => "error"
+                ];
+
+                return json_encode($alerta);
+                exit();
+            }
+
+            #verificar usuario
+            $dato = $this->ejecutarConsulta("SELECT * FROM users WHERE user_id = $id");
+
+            if($dato->rowCount() <= 0){
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "No se ha encontrado el usuario",
+                    "icono" => "error"
+                ];
+
+                return json_encode($alerta);
+                exit();
+            }else{
+                $dato = $dato->fetch();
+            }
+
+            $eliminarUsuario = $this->eliminarDatos("users", "user_id", $id);
+
+            if($eliminarUsuario->rowCount() == 1){
+
+                #eliminar imagen si se subio al servidor
+                if(is_file("../views/fotos/".$dato['user_image'])){
+                    chmod("../views/fotos/".$dato['user_image'], 0777);
+                    unlink("../views/fotos/".$dato['user_image']);
+                }
+
+                $alerta = [
+                    "tipo" => "recargar",
+                    "titulo" => "Usuario eliminado",
+                    "texto" => "El usuario ".$dato['user_name']." ".$dato['user_lastname']." se elimino con exito",
+                    "icono" => "success"
+                ];
+            }else{
+                $alerta = [
+                    "tipo" => "simple",
+                    "titulo" => "Ocurrió un error inesperado",
+                    "texto" => "No se pudo eliminar el usuario",
+                    "icono" => "error"
+                ];
+            }
+            return json_encode($alerta);
+
+        }
+
+        
 
     }

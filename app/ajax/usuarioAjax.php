@@ -13,6 +13,9 @@
         if($_POST['modulo_usuario'] == "registrar"){
             echo $instUsuario->registrarUsuarioControlador();
         }
+        if($_POST['modulo_usuario'] == "eliminar"){
+            echo $instUsuario->eliminarUsuarioControlador();
+        }
 
     }else{
         session_destroy();
