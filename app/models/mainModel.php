@@ -129,7 +129,7 @@
 
         protected function actualizarDatos($tabla, $datos, $condicion){
             
-            $query = "UPDATE $tabla SET";
+            $query = "UPDATE $tabla SET ";
 
             $count = 0;
 
@@ -137,7 +137,7 @@
 
                 if($count >= 1)
                     $query .= ",";
-                $query .= $dato["campo_nombre"]."=".$dato["campo_marcador"];
+                $query .= $dato['campo_nombre']." = ".$dato['campo_marcador'];
                 
                 $count++;
 
@@ -145,13 +145,13 @@
 
             $query .= " WHERE ".$condicion['condicion_campo']." = ".$condicion['condicion_marcador'];
 
-
             $sql = $this->conectar()->prepare($query);
 
+
             foreach($datos as $dato){
-                $sql->bindParam($dato["campo_marcador"], $dato["campo_valor"]);
+                $sql->bindParam($dato['campo_marcador'], $dato['campo_valor']);
             }
-            $sql->bindParam($condicion["condicion_marcador"], $condicion["condicion_valor"]);
+            $sql->bindParam($condicion['condicion_marcador'], $condicion['condicion_valor']);
 
             $sql->execute();
 

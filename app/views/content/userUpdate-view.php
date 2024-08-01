@@ -29,7 +29,7 @@
 
 	<h2 class="title has-text-centered"> <?php echo $datos['user_name']." ".$datos['user_lastname'] ?> </h2>
 
-	<p class="has-text-centered pb-6"> <?php  echo "<strong>Usuario creado:</strong> ".date("d-m-Y h:m:s A", strtotime($datos["user_created"]))." &nbsp; <strong>Usuario actualizado: </strong>".date("d-m-Y h:m:s A", strtotime($datos["user_created"])); ?> </p>
+	<p class="has-text-centered pb-6"> <?php  echo "<strong>Usuario creado:</strong> ".date("d-m-Y h:i:s A", strtotime($datos["user_created"]))." &nbsp; <strong>Usuario actualizado: </strong>".date("d-m-Y h:i:s A", strtotime($datos["user_update"])); ?> </p>
 
 	<form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/usuarioAjax.php" method="POST" autocomplete="off" >
 

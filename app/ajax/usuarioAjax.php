@@ -16,6 +16,9 @@
         if($_POST['modulo_usuario'] == "eliminar"){
             echo $instUsuario->eliminarUsuarioControlador();
         }
+        if($_POST['modulo_usuario'] == "actualizar"){
+            echo $instUsuario->actualizarUsuarioControlador();
+        }
 
     }else{
         session_destroy();
