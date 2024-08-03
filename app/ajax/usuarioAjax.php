@@ -19,7 +19,13 @@
         if($_POST['modulo_usuario'] == "actualizar"){
             echo $instUsuario->actualizarUsuarioControlador();
         }
-
+        if($_POST['modulo_usuario'] == "actualizarFoto"){
+            echo $instUsuario->actualizarFotoUsuarioControlador();
+        }
+        if($_POST['modulo_usuario'] == "eliminarFoto"){
+            echo $instUsuario->eliminarFotoUsuarioControlador();
+        }
+        
     }else{
         session_destroy();
         header('Location: '.APP_URL.'login/');
